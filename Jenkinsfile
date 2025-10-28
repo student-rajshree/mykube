@@ -1,4 +1,40 @@
 pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                script {
+                    echo "Building Docker image..."
+                    bat 'docker build -t w9-dd-app:latest .'
+                    bat 'docker tag w9-dd-app:latest wilsonbolledula/w9-dh-app:latest'
+                    bat 'docker push wilsonbolledula/w9-dh-app:latest'
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                script {
+                    echo "Starting deployment to Kubernetes..."
+                    bat 'minikube delete || exit 0'
+                    bat 'minikube start'
+                    bat 'kubectl apply -f my-kube1-deployment.yaml'
+                    bat 'kubectl apply -f my-kube1-service.yaml'
+                    echo 'Deployment completed successfully!'
+                }
+            }
+        }
+    }
+}
+
+/*pipeline {
     agent any 
 
     stages {
@@ -42,7 +78,7 @@ pipeline {
         }
     }
 }
-
+*/
 /*pipeline {
     agent any
 
