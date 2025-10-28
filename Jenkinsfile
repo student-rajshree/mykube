@@ -1,40 +1,4 @@
 pipeline {
-    agent any
-
-    stages {
-        stage('Build') {
-            steps {
-                script {
-                    echo "Building Docker image..."
-                    bat 'docker build -t w9-dd-app:latest .'
-                    bat 'docker tag w9-dd-app:latest wilsonbolledula/w9-dh-app:latest'
-                    bat 'docker push wilsonbolledula/w9-dh-app:latest'
-                }
-            }
-        }
-
-        stage('Test') {
-            steps {
-                echo 'Running tests...'
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                script {
-                    echo "Starting deployment to Kubernetes..."
-                    bat 'minikube delete || exit 0'
-                    bat 'minikube start'
-                    bat 'kubectl apply -f my-kube1-deployment.yaml'
-                    bat 'kubectl apply -f my-kube1-service.yaml'
-                    echo 'Deployment completed successfully!'
-                }
-            }
-        }
-    }
-}
-
-/*pipeline {
     agent any 
 
     stages {
@@ -43,8 +7,8 @@ pipeline {
                 script {
                     // Build and push Docker image
                     bat 'docker build -t w9-dd-app:latest .'
-                    bat 'docker tag w9-dd-app:latest wilsonbolledula/w9-dh-app:latest'
-                    bat 'docker push wilsonbolledula/w9-dh-app:latest'
+                    bat 'docker tag w9-dd-app:latest student-rajshree/w9-dh-app:latest'
+                    bat 'docker push student-rajshree/w9-dh-app:latest'
                 }
             }
         }
@@ -78,50 +42,3 @@ pipeline {
         }
     }
 }
-*/
-/*pipeline {
-    agent any
-
-    environment {
-        IMAGE_NAME = "wilsonbolledula/w9-dh-app:latest"
-    }
-
-    stages {
-        stage('Build and Push Docker Image') {
-            steps {
-                script {
-                    bat "docker build -t ${IMAGE_NAME} ."
-                    withCredentials([usernamePassword(credentialsId: 'docker-hub-cred', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                        bat "docker login -u %USER% -p %PASS%"
-                        bat "docker push ${IMAGE_NAME}"
-                    }
-                }
-            }
-        }
-
-        stage('Test') {
-            steps {
-                script {
-                    echo 'Running Selenium tests...'
-                    // Add your test commands here
-                    // bat 'python tests/seleniumDockerTest.py'
-                }
-            }
-        }
-
-        stage('Deploy to Minikube') {
-            steps {
-                script {
-                    bat 'minikube status || minikube start'
-                    bat 'minikube addons enable dashboard'
-                    bat 'kubectl apply -f my-kube1-deployment.yaml'
-                    bat 'kubectl apply -f my-kube1-service.yaml'
-                    bat 'kubectl rollout status deployment/my-kube1-deployment'
-                    bat 'minikube dashboard --url'
-                    echo '✅ Deployment Successful!'
-                }
-            }
-        }
-    }
-}
-*/
